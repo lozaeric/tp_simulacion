@@ -9,16 +9,16 @@ public class Servidor extends Iterador {
 	}
 	
 	public void iterar () {
-		double tiempoActual = getDirector().getCronometro ().getTiempo (), tiempoEnCola;
+		double tiempoActual = getDirector().getCronometro ().getTiempo ();
 		
 		if (estaOcupado && tiempoActual-llegadaUltimo>tiempoAtencion)
 			estaOcupado = false;
 		
 		if (getDirector().getCola ().getClientes ()>0 && !estaOcupado) {
+			changed ();
 			llegadaUltimo = tiempoActual;
 			tiempoAtencion = -Math.log (1-Math.random ())/mu;
 			estaOcupado = true;
-			changed ();
 		}
 	}
 	
@@ -39,6 +39,14 @@ public class Servidor extends Iterador {
 	         + llegadaUltimo + ", tiempoAtencion=" + tiempoAtencion + ", mu="
 	         + mu + "]";
    }
+
+	public double getMu() {
+		return mu;
+	}
+
+	public void setMu(double mu) {
+		this.mu = mu;
+	}
 	
 	
 }

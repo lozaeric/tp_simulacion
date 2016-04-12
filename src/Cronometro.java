@@ -1,5 +1,5 @@
 
-public class Cronometro extends Iterador {
+public class Cronometro extends Iterador implements Runnable {
 	private long tiempo = 0;
 	private double velocidad;
 	
@@ -19,6 +19,10 @@ public class Cronometro extends Iterador {
 			tiempo++;
 			changed ();
 		}
+	}
+	
+	public void run () {
+		iterar ();
 	}
 	
 	public double getTiempo () {

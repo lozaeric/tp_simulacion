@@ -2,7 +2,7 @@ import java.util.HashMap;
 
 
 public class Estadistica extends Iterador {
-	private HashMap<Integer, Integer> clientesSistema = new HashMap<Integer, Integer>  (), clientesCola = new HashMap<Integer, Integer>  ();
+	private HashMap<Integer, Integer> clientesSistema = new HashMap<Integer, Integer>  ();
 	private double sumaSistema,sumaCola, sumaEnSistema, sumaEnCola;
 	private int clientesUnicos;
 	
@@ -11,9 +11,11 @@ public class Estadistica extends Iterador {
    }
 	
 	public void iterar () {
-		int clientesS = 0, clientesC = getDirector ().getCola ().getClientes ();
+		int clientesS = 0, clientesC = getDirector ().getCola ().getClientes (), clientesServidor = 0;
 		
-		clientesS = getDirector().getCola ().getClientes () + (getDirector().getServidor ().estaOcupado ()? 1:0);
+		for (Servidor s :  getDirector().getServidores()) 
+			clientesServidor += s.estaOcupado ()? 1:0;
+		clientesS = getDirector().getCola ().getClientes () + clientesServidor;
 		sumaSistema += clientesS;
 		sumaCola += clientesC;
 		if (clientesSistema.containsKey (clientesS))
