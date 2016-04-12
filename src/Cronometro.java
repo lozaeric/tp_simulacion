@@ -8,7 +8,7 @@ public class Cronometro extends Iterador {
 		this.velocidad = velocidad;
 	}	
 	
-	public void iniciar () {
+	public void iterar () {
 		while (true) {
 			try {
 		      Thread.sleep ((long) (10/velocidad));
