@@ -1,34 +1,37 @@
 
-public class Servidor {
+public class Servidor extends Iterador {
 	private boolean estaOcupado;
 	private double llegadaUltimo, mu, tiempoAtencion;
-	private Sistema sistema;
-	
-	public Servidor (double mu) {
+
+	public Servidor (Sistema d, double mu) {
+		super (d);
 		this.mu = mu;
 	}
 	
-	public void setSistema (Sistema sistema) {
-		this.sistema = sistema;
-	}
-	
 	public void iterar () {
-		double tiempoActual = sistema.getCronometro ().getTiempo (), tiempoEnCola;
+		double tiempoActual = getDirector().getCronometro ().getTiempo (), tiempoEnCola;
 		
 		if (estaOcupado && tiempoActual-llegadaUltimo>tiempoAtencion)
 			estaOcupado = false;
 		
-		if (sistema.getCola ().getClientes ()>0 && !estaOcupado) {
+		if (getDirector().getCola ().getClientes ()>0 && !estaOcupado) {
 			llegadaUltimo = tiempoActual;
 			tiempoAtencion = -Math.log (1-Math.random ())/mu;
-			tiempoEnCola = sistema.getCola ().despacharCliente ();
-			sistema.getEstadistica ().sumaTiempoSistema (tiempoEnCola+tiempoAtencion);
 			estaOcupado = true;
+			changed ();
 		}
 	}
 	
 	public boolean estaOcupado () {
 		return estaOcupado;
+	}
+	
+	public Sistema getDirector () {
+		return (Sistema) super.getDirector ();
+	}
+	
+	public double getTiempoAtencion () {
+		return tiempoAtencion;
 	}
 
 	public String toString () {

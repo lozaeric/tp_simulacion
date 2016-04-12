@@ -1,72 +1,49 @@
-import java.util.Arrays;
 
-
-public class Sistema {
-	private int clientes;
-	private long clientesUnicos;
-	private Cronometro cronometro;
+public class Sistema implements Director {
 	private Cola cola;
-	private Servidor servidores[];
-	private Estadistica estadistica;	
-	private double mu,lambda;
+	private Servidor servidor;
+	private Estadistica estadistica;
+	private Cronometro cronometro;
 	
-	
-	public Sistema (Cola cola, Servidor servidores[], Cronometro cronometro) {
-		super ();
-		this.cronometro = cronometro;
-		this.cronometro.setSistema (this);
-		this.cola = cola;
-		this.cola.setSistema (this);
-		this.servidores = servidores;
-		for (Servidor servidor : servidores)
-			servidor.setSistema (this);
-		estadistica = new Estadistica (this);
+	public Sistema (double lambda, double mu, double velocidad) {
+		this.crearIteradores (lambda, mu, velocidad);
 	}
 	
-	public void iniciar () {
-		cronometro.start ();
-	}
-	
-	public void iterar () {
-		cola.iterar ();
-		clientes = cola.getClientes ();
-		for (Servidor servidor : servidores)
-			clientes += servidor.estaOcupado ()? 1:0;
-		estadistica.iterar ();
-		for (Servidor servidor : servidores)
+	public void iteradorCambiado (Iterador i) {
+		if (i.equals (cronometro)) {
+			cola.iterar ();
 			servidor.iterar ();
-		//System.out.println (toString ());
-		System.out.println ("P0="+estadistica.getProbN (0)+", L="+estadistica.getL ()+", Lq="+estadistica.getLq ()+", W="+estadistica.getW()+", Wq="+estadistica.getWq());
+			estadistica.iterar ();
+		}
+		else if (i.equals (cola)) 
+			estadistica.nuevoClienteUnico ();
+		else if (i.equals (servidor)) {
+			double tiempoEnCola = getCola ().despacharCliente ();
+			getEstadistica ().sumaTiempoSistema (tiempoEnCola+getServidor().getTiempoAtencion ());
+		}
 	}
-	
-	public Cronometro getCronometro () {
-		return cronometro;
+
+	public void crearIteradores (double lambda, double mu, double velocidad) {
+		cola = new Cola (this, lambda);
+		estadistica = new Estadistica (this);
+		servidor = new Servidor (this, mu);
+		cronometro = new Cronometro (this, velocidad);
 	}
-	
-	public int getClientes () {
-		return clientes;
-	}
-	
-	public long getClientesUnicos () {
-		return clientesUnicos;
-	}
-	
-	public void nuevoClienteUnico () {
-		clientesUnicos++;
-	}
-	
+
 	public Cola getCola () {
 		return cola;
+	}
+
+	public Servidor getServidor () {
+		return servidor;
 	}
 	
 	public Estadistica getEstadistica () {
 		return estadistica;
 	}
+	
+	public Cronometro getCronometro () {
+		return cronometro;
+	}
 
-	public String toString () {
-	   return "Sistema [cronometro=" + cronometro + ", cola=" + cola
-	         + ", servidor=" + Arrays.toString (servidores) + ", estadistica=" + estadistica + "]";
-   }
-	
-	
 }
