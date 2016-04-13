@@ -43,7 +43,19 @@ public class Sistema implements Director {
 		cronometro = new Cronometro (this);
 		hilo = new Thread (cronometro);
 	}
-
+	
+	public void reanudar_pausar () {
+		if (cronometro.estaDetenido ())
+			cronometro.setDetenido (false);
+		else
+			cronometro.setDetenido (true);
+	}
+	
+	public void detener () {
+		hilo.interrupt ();
+		cronometro.setTerminado (true);
+	}
+	
 	public Cola getCola () {
 		return cola;
 	}

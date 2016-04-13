@@ -34,6 +34,23 @@ public class Interfaz extends JFrame {
 			}
 			
 		});
+		reanudar_pausar.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (Sistema s : sistemas)
+					s.reanudar_pausar ();
+			}
+			
+		});
+		detener.addActionListener(new ActionListener () {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				for (Sistema s : sistemas) 
+					s.detener ();
+				sistemas = null;
+			}
+			
+		});
 		add (_lambda);
 		add (lambda);
 		add (_mu);
