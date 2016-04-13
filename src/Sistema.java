@@ -4,13 +4,14 @@ public class Sistema implements Director {
 	private Servidor servidores[];
 	private Estadistica estadistica;
 	private Cronometro cronometro;
+	private Thread hilo;
 	
-	public Sistema (double lambda, double mu, double velocidad) {
-		this.crearIteradores (lambda, mu, velocidad, 1);
+	public Sistema (double lambda, double mu) {
+		this.crearIteradores (lambda, mu, 1);
 	}
 	
-	public Sistema (double lambda, double mu, double velocidad, int cantidadServidores) {
-		this.crearIteradores (lambda, mu, velocidad, cantidadServidores);
+	public Sistema (double lambda, double mu, int cantidadServidores) {
+		this.crearIteradores (lambda, mu, cantidadServidores);
 	}
 	
 	public void iteradorCambiado (Iterador i) {
@@ -33,13 +34,14 @@ public class Sistema implements Director {
 		}
 	}
 
-	public void crearIteradores (double lambda, double mu, double velocidad, int n) {
+	public void crearIteradores (double lambda, double mu, int n) {
 		cola = new Cola (this, lambda);
 		estadistica = new Estadistica (this);
 		servidores = new Servidor[n];
 		for (int i=0; i<servidores.length; i++)
 			servidores[i] = new Servidor (this, mu);
-		cronometro = new Cronometro (this, velocidad);
+		cronometro = new Cronometro (this);
+		hilo = new Thread (cronometro);
 	}
 
 	public Cola getCola () {
@@ -56,5 +58,9 @@ public class Sistema implements Director {
 	
 	public Cronometro getCronometro () {
 		return cronometro;
+	}
+	
+	public Thread getHilo () {
+		return hilo;
 	}
 }

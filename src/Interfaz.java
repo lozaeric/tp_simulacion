@@ -26,11 +26,10 @@ public class Interfaz extends JFrame {
 				
 				sistemas = new Sistema [n];
 				for (int i=0; i<n; i++) {
-					sistemas[i] = new Sistema (__lambda, __mu, 1, __s);
+					sistemas[i] = new Sistema (__lambda, __mu, __s);
 					sistemas[i].getCola().setClientes(__nq);
+					sistemas[i].getHilo ().start ();
 				}
-				for (Sistema s : sistemas) 
-					s.getCronometro().run();
 				
 			}
 			

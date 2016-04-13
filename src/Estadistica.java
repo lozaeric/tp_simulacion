@@ -32,16 +32,16 @@ public class Estadistica extends Iterador {
 	
 	public double getProbN (int nClientes) {
 		if (clientesSistema.containsKey (nClientes))
-			return ((double) clientesSistema.get (nClientes))/getDirector().getCronometro ().getTiempo ()/100;
+			return ((double) clientesSistema.get (nClientes))/getDirector().getCronometro ().getTiempo ()/1000;
 		return 0;
 	}
 	
 	public double getL () {
-		return sumaSistema/getDirector().getCronometro ().getTiempo ()/100;
+		return sumaSistema/getDirector().getCronometro ().getTiempo ()/1000;
 	}
 	
 	public double getLq () {
-		return sumaCola/getDirector().getCronometro ().getTiempo ()/100;	
+		return sumaCola/getDirector().getCronometro ().getTiempo ()/1000;	
 	}
 	
 	public void sumaTiempoCola (double tiempoCola) {

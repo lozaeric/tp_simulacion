@@ -3,15 +3,14 @@ public class Cronometro extends Iterador implements Runnable {
 	private long tiempo = 0;
 	private double velocidad;
 	
-	public Cronometro (Sistema d , double velocidad) {
+	public Cronometro (Sistema d) {
 		super (d);
-		this.velocidad = velocidad;
 	}	
 	
 	public void iterar () {
 		while (true) {
 			try {
-		      Thread.sleep ((long) (10/velocidad));
+		      Thread.sleep (1);
 	      }
 	      catch (InterruptedException err) {
 		      err.printStackTrace();
@@ -26,11 +25,11 @@ public class Cronometro extends Iterador implements Runnable {
 	}
 	
 	public double getTiempo () {
-		return (double) tiempo/100;
+		return (double) tiempo/1000;
 	}
 	
 	public String toString () {
-	   return "Cronometro [tiempo=" + (double) tiempo/100 + "]";
+	   return "Cronometro [tiempo=" + (double) tiempo/1000 + "]";
    }
 	
 
