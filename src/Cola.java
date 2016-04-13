@@ -1,45 +1,66 @@
+import java.util.ArrayList;
 
-public class Cola {
-	private int clientes;
+
+public class Cola extends Iterador {
+	//private int clientes;
 	private double lambda, llegadaProximo, llegadaUltimo;
-	private Sistema sistema;
-	
-	public Cola (double lambda) {
+	private ArrayList<Cliente> _clientes  = new ArrayList<Cliente>();
+
+	public Cola (Sistema d, double lambda) {
+		super (d);
 		this.lambda = lambda;
 		llegadaProximo = -Math.log (1-Math.random ())/this.lambda;
 	}
 	
 	public void iterar () {
-		double tiempoActual = sistema.getCronometro ().getTiempo ();
-		
+		double tiempoActual = getDirector ().getCronometro ().getTiempo ();
+				
 		if (tiempoActual-llegadaUltimo>llegadaProximo) {
-			sistema.nuevoClienteUnico ();
 			llegadaUltimo = tiempoActual;
+			_clientes.add(new Cliente (llegadaUltimo));
 			llegadaProximo = -Math.log (1-Math.random ())/lambda;
-			clientes++;
+			changed ();
 		}
 	}
 	
-	public void setSistema (Sistema sistema) {
-		this.sistema = sistema;
+	public void setClientes (int n) {
+		double tiempoActual = getDirector ().getCronometro ().getTiempo ();
+		for (int i=0; i<n; i++) {
+			llegadaUltimo = tiempoActual;
+			_clientes.add(new Cliente (llegadaUltimo));
+			changed ();
+		}
 	}
 	
-	public double despacharCliente () {
-		double tiempoEnCola = sistema.getCronometro ().getTiempo ()-llegadaUltimo;
+	public Cliente despacharCliente () {
+		//double tiempoEnCola = getDirector ().getCronometro ().getTiempo ()-llegadaUltimo;
 		
-		clientes--;
-		sistema.getEstadistica ().sumaTiempoCola (tiempoEnCola);
-		return tiempoEnCola;
+		//clientes--;
+		_clientes.get(0).setLlegadaServidor(getDirector ().getCronometro ().getTiempo ());
+		getDirector ().getEstadistica ().sumaTiempoCola (_clientes.get(0).getLlegadaServidor()-_clientes.get(0).getLlegadaSistema());
+		return _clientes.remove(0);
 	}
 	
 	public int getClientes () {
-		return clientes;
+		return _clientes.size();
+	}
+	
+	public Sistema getDirector () {
+		return (Sistema) super.getDirector ();
 	}
 
 	public String toString () {
-	   return "Cola [clientes=" + clientes + ", llegadaUltimo=" + llegadaUltimo
+	   return "Cola [clientes=" + _clientes + ", llegadaUltimo=" + llegadaUltimo
 	         + ", llegadaProximo=" + llegadaProximo + ", lambda=" + lambda + "]";
    }
+
+	public double getLambda() {
+		return lambda;
+	}
+
+	public void setLambda(double lambda) {
+		this.lambda = lambda;
+	}
 	
 	
 }

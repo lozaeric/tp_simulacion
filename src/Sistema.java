@@ -1,72 +1,60 @@
-import java.util.Arrays;
 
-
-public class Sistema {
-	private int clientes;
-	private long clientesUnicos;
-	private Cronometro cronometro;
+public class Sistema implements Director {
 	private Cola cola;
 	private Servidor servidores[];
-	private Estadistica estadistica;	
-	private double mu,lambda;
+	private Estadistica estadistica;
+	private Cronometro cronometro;
 	
+	public Sistema (double lambda, double mu, double velocidad) {
+		this.crearIteradores (lambda, mu, velocidad, 1);
+	}
 	
-	public Sistema (Cola cola, Servidor servidores[], Cronometro cronometro) {
-		super ();
-		this.cronometro = cronometro;
-		this.cronometro.setSistema (this);
-		this.cola = cola;
-		this.cola.setSistema (this);
-		this.servidores = servidores;
-		for (Servidor servidor : servidores)
-			servidor.setSistema (this);
+	public Sistema (double lambda, double mu, double velocidad, int cantidadServidores) {
+		this.crearIteradores (lambda, mu, velocidad, cantidadServidores);
+	}
+	
+	public void iteradorCambiado (Iterador i) {
+		if (i.equals (cronometro)) {
+			cola.iterar ();
+			for (Servidor s : servidores)
+				s.iterar ();
+			estadistica.iterar ();
+		}
+		else if (i.equals (cola)) 
+			estadistica.nuevoClienteUnico ();
+		else {
+			for (Servidor s : servidores) {
+				if (s.equals(i)) {
+					Cliente c = cola.despacharCliente ();
+					c.setSalidaSistema(cronometro.getTiempo()+s.getTiempoAtencion());
+					getEstadistica ().sumaTiempoSistema (c.getSalidaSistema()-c.getLlegadaSistema());
+				}
+			}
+		}
+	}
+
+	public void crearIteradores (double lambda, double mu, double velocidad, int n) {
+		cola = new Cola (this, lambda);
 		estadistica = new Estadistica (this);
+		servidores = new Servidor[n];
+		for (int i=0; i<servidores.length; i++)
+			servidores[i] = new Servidor (this, mu);
+		cronometro = new Cronometro (this, velocidad);
 	}
-	
-	public void iniciar () {
-		cronometro.start ();
-	}
-	
-	public void iterar () {
-		cola.iterar ();
-		clientes = cola.getClientes ();
-		for (Servidor servidor : servidores)
-			clientes += servidor.estaOcupado ()? 1:0;
-		estadistica.iterar ();
-		for (Servidor servidor : servidores)
-			servidor.iterar ();
-		//System.out.println (toString ());
-		System.out.println ("P0="+estadistica.getProbN (0)+", L="+estadistica.getL ()+", Lq="+estadistica.getLq ()+", W="+estadistica.getW()+", Wq="+estadistica.getWq());
-	}
-	
-	public Cronometro getCronometro () {
-		return cronometro;
-	}
-	
-	public int getClientes () {
-		return clientes;
-	}
-	
-	public long getClientesUnicos () {
-		return clientesUnicos;
-	}
-	
-	public void nuevoClienteUnico () {
-		clientesUnicos++;
-	}
-	
+
 	public Cola getCola () {
 		return cola;
+	}
+
+	public Servidor[] getServidores () {
+		return servidores;
 	}
 	
 	public Estadistica getEstadistica () {
 		return estadistica;
 	}
-
-	public String toString () {
-	   return "Sistema [cronometro=" + cronometro + ", cola=" + cola
-	         + ", servidor=" + Arrays.toString (servidores) + ", estadistica=" + estadistica + "]";
-   }
 	
-	
+	public Cronometro getCronometro () {
+		return cronometro;
+	}
 }

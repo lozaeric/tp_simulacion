@@ -1,14 +1,14 @@
 
-public class Cronometro extends Thread {
+public class Cronometro extends Iterador implements Runnable {
 	private long tiempo = 0;
-	private Sistema sistema;
 	private double velocidad;
 	
-	public Cronometro (double velocidad) {
+	public Cronometro (Sistema d , double velocidad) {
+		super (d);
 		this.velocidad = velocidad;
 	}	
 	
-	public void run () {
+	public void iterar () {
 		while (true) {
 			try {
 		      Thread.sleep ((long) (10/velocidad));
@@ -17,18 +17,18 @@ public class Cronometro extends Thread {
 		      err.printStackTrace();
 	      }
 			tiempo++;
-			sistema.iterar ();
+			changed ();
 		}
+	}
+	
+	public void run () {
+		iterar ();
 	}
 	
 	public double getTiempo () {
 		return (double) tiempo/100;
 	}
 	
-	public void setSistema (Sistema sistema) {
-		this.sistema = sistema;
-	}
-
 	public String toString () {
 	   return "Cronometro [tiempo=" + (double) tiempo/100 + "]";
    }
