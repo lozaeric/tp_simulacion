@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 
@@ -22,8 +23,6 @@ public class Estadistica extends Iterador {
 			clientesSistema.put (clientesS, clientesSistema.get (clientesS)+1);
 		else
 			clientesSistema.put (clientesS, 1);
-		
-		System.out.println ("P0="+getProbN (0)+", L="+getL ()+", Lq="+getLq ()+", W="+getW()+", Wq="+getWq());
 	}
 	
 	public void nuevoClienteUnico () {
@@ -60,6 +59,10 @@ public class Estadistica extends Iterador {
 		return sumaEnSistema/clientesUnicos;
 	}
 	
+	public String toString () {
+		DecimalFormat tresDigitos=new DecimalFormat("0.000"); 
+		return "P(0)="+tresDigitos.format (getProbN (0))+",   L="+tresDigitos.format (getL ())+",   Lq="+tresDigitos.format (getLq ())+",   W="+tresDigitos.format (getW())+",   Wq="+tresDigitos.format (getWq())+",   Nq="+tresDigitos.format (getDirector().getCola ().getClientes ());
+	}
 	
 	public Sistema getDirector () {
 		return (Sistema) super.getDirector ();

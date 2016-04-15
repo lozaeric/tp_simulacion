@@ -45,10 +45,10 @@ public class Sistema implements Director {
 	}
 	
 	public void reanudar_pausar () {
-		if (cronometro.estaDetenido ())
-			cronometro.setDetenido (false);
+		if (cronometro.estaPausado ())
+			cronometro.setPausado (false);
 		else
-			cronometro.setDetenido (true);
+			cronometro.setPausado (true);
 	}
 	
 	public void detener () {

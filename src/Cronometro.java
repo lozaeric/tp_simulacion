@@ -34,11 +34,11 @@ public class Cronometro extends Iterador implements Runnable {
 	   return "Cronometro [tiempo=" + (double) tiempo/1000 + "]";
    }
 
-	public boolean estaDetenido () {
+	public boolean estaPausado () {
 		return detenido;
 	}
 
-	public void setDetenido (boolean detenido) {
+	public void setPausado (boolean detenido) {
 		this.detenido = detenido;
 	}
 

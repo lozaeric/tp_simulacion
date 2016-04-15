@@ -1,24 +1,24 @@
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 
 public class Interfaz extends JFrame {
 	private JTextField lambda = new JTextField (5), mu = new JTextField (5), nq = new JTextField (5), s = new JTextField (5), nSistemas = new JTextField (5);
-	private JButton iniciar  = new JButton ("Iniciar"), detener = new JButton ("Detener"), verEstadistica = new JButton ("Ver estadistica"), reanudar_pausar = new JButton ("Reanudar/Pausar");
+	private JTextArea estadistica = new JTextArea (10, 40);
+	private JButton iniciar  = new JButton ("Iniciar"), detener = new JButton ("Detener"), reanudar_pausar = new JButton ("Reanudar/Pausar");
 	private JLabel _lambda = new JLabel ("λ"), _mu = new JLabel ("µ"), _nq = new JLabel ("Nq"), _s = new JLabel ("Servidores"), _nSistemas = new JLabel ("Sistemas");
 	private Sistema sistemas[];
+	private ActualizadorEstadistica actualizador;
 	
 	public Interfaz () { 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout (new FlowLayout ());
-		setSize(550, 130);
-		setVisible(true);
+		setSize(550, 275);
 		
 		iniciar.addActionListener(new ActionListener () {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int n = Integer.parseInt (nSistemas.getText()), __s = Integer.parseInt (s.getText()), __nq = Integer.parseInt(nq.getText());
@@ -30,15 +30,26 @@ public class Interfaz extends JFrame {
 					sistemas[i].getCola().setClientes(__nq);
 					sistemas[i].getHilo ().start ();
 				}
-				
+				if (actualizador==null)
+					actualizador = new ActualizadorEstadistica ();
 			}
 			
 		});
 		reanudar_pausar.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				for (Sistema s : sistemas)
+				int __nq = Integer.parseInt(nq.getText());
+				double __lambda = Double.parseDouble(lambda.getText()), __mu = Double.parseDouble(mu.getText());
+				
+				for (Sistema s : sistemas) {
+					if (s.getCronometro ().estaPausado ()) {
+						s.getCola ().setClientes (__nq);
+						s.getCola ().setLambda (__lambda);
+						for (Servidor server : s.getServidores ())
+							server.setMu (__mu);
+					}
 					s.reanudar_pausar ();
+				}
 			}
 			
 		});
@@ -51,6 +62,8 @@ public class Interfaz extends JFrame {
 			}
 			
 		});
+		estadistica.setEditable (false);
+		estadistica.setBackground (new Color (180,240,180));
 		add (_lambda);
 		add (lambda);
 		add (_mu);
@@ -64,10 +77,27 @@ public class Interfaz extends JFrame {
 		add (iniciar);
 		add (detener);
 		add (reanudar_pausar);
-		add (verEstadistica);
+		add (estadistica);
+		setVisible(true);
 	}
 	
 	public static void main (String args[]) {
 		new Interfaz ();
+	}
+	
+	private class ActualizadorEstadistica implements ActionListener
+	{
+		public ActualizadorEstadistica() {
+			(new Timer(333,this)).start();
+		}
+		public void actionPerformed (ActionEvent e) {
+			StringBuilder mostrar = new StringBuilder ();
+			
+			if (sistemas==null || sistemas[0].getCronometro ().estaPausado ()|| sistemas[0].getCronometro ().isTerminado ())
+				return;
+			for (Sistema s: sistemas) 
+				mostrar.append (s.getEstadistica ().toString ()+'\n');
+			estadistica.setText (mostrar.toString ());
+		}
 	}
 }
