@@ -61,7 +61,7 @@ public class Estadistica extends Iterador {
 	
 	public String toString () {
 		DecimalFormat tresDigitos=new DecimalFormat("0.000"); 
-		return "P(0)="+tresDigitos.format (getProbN (0))+",   L="+tresDigitos.format (getL ())+",   Lq="+tresDigitos.format (getLq ())+",   W="+tresDigitos.format (getW())+",   Wq="+tresDigitos.format (getWq())+",   Nq="+tresDigitos.format (getDirector().getCola ().getClientes ());
+		return tresDigitos.format (getProbN (0))+"\t"+tresDigitos.format (getProbN (1))+"\t"+tresDigitos.format (getProbN (2))+"\t"+tresDigitos.format (getL ())+"\t"+tresDigitos.format (getLq ())+"\t"+tresDigitos.format (getW())+"\t"+tresDigitos.format (getWq())+"\t"+tresDigitos.format (getDirector().getCola ().getClientes ());
 	}
 	
 	public Sistema getDirector () {

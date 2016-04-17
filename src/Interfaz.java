@@ -6,17 +6,18 @@ import javax.swing.*;
 
 
 public class Interfaz extends JFrame {
-	private JTextField lambda = new JTextField (5), mu = new JTextField (5), nq = new JTextField (5), s = new JTextField (5), nSistemas = new JTextField (5);
-	private JTextArea estadistica = new JTextArea (10, 40);
+	private JTextField lambda = new JTextField (5), mu = new JTextField (5), nq = new JTextField (5), s = new JTextField (5), nSistemas = new JTextField (5), tiempoActual = new JTextField (6);
+	private JTextArea estadistica = new JTextArea (12, 60);
 	private JButton iniciar  = new JButton ("Iniciar"), detener = new JButton ("Detener"), reanudar_pausar = new JButton ("Reanudar/Pausar");
-	private JLabel _lambda = new JLabel ("λ"), _mu = new JLabel ("µ"), _nq = new JLabel ("Nq"), _s = new JLabel ("Servidores"), _nSistemas = new JLabel ("Sistemas");
+	private JLabel _lambda = new JLabel ("λ"), _mu = new JLabel ("µ"), _nq = new JLabel ("Nq"), _s = new JLabel ("Servidores"), _nSistemas = new JLabel ("Sistemas"), _tiempoActual = new JLabel ("Tiempo transcurrido");
 	private Sistema sistemas[];
 	private ActualizadorEstadistica actualizador;
 	
 	public Interfaz () { 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout (new FlowLayout ());
-		setSize(550, 275);
+		setSize(825, 300);
+		setTitle ("TP de Simulación y Modelización   -   Loza, Eric   Azzi, Federico   Martinho, Matias");
 		
 		iniciar.addActionListener(new ActionListener () {
 			@Override
@@ -38,6 +39,8 @@ public class Interfaz extends JFrame {
 		reanudar_pausar.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if (sistemas==null)
+					return;
 				int __nq = Integer.parseInt(nq.getText());
 				double __lambda = Double.parseDouble(lambda.getText()), __mu = Double.parseDouble(mu.getText());
 				
@@ -56,6 +59,8 @@ public class Interfaz extends JFrame {
 		detener.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if (sistemas==null)
+					return;
 				for (Sistema s : sistemas) 
 					s.detener ();
 				sistemas = null;
@@ -63,6 +68,7 @@ public class Interfaz extends JFrame {
 			
 		});
 		estadistica.setEditable (false);
+		tiempoActual.setEditable (false);
 		estadistica.setBackground (new Color (180,240,180));
 		add (_lambda);
 		add (lambda);
@@ -77,6 +83,9 @@ public class Interfaz extends JFrame {
 		add (iniciar);
 		add (detener);
 		add (reanudar_pausar);
+		add (_tiempoActual);
+		add (tiempoActual);
+		add (new JLabel ("segundos"));
 		add (estadistica);
 		setVisible(true);
 	}
@@ -95,9 +104,11 @@ public class Interfaz extends JFrame {
 			
 			if (sistemas==null || sistemas[0].getCronometro ().estaPausado ()|| sistemas[0].getCronometro ().isTerminado ())
 				return;
+			mostrar.append ("P(0)\tP(1)\tP(2)\tL\tLq\tW\tWq\tNq\n");
 			for (Sistema s: sistemas) 
 				mostrar.append (s.getEstadistica ().toString ()+'\n');
 			estadistica.setText (mostrar.toString ());
+			tiempoActual.setText (String.valueOf (sistemas[0].getCronometro ().getTiempo ()));
 		}
 	}
 }
